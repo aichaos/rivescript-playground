@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block title %}RiveScript Playground{% endblock %}
+{% block content %}
+
+<form id="playground-form">
+<div id="container">
+
+	<header>
+		<span>The RiveScript Playground</span>
+
+		<nav>
+			<ul>
+				<li><button type="button" id="run">Run</button></li>
+				<li><button type="button" id="share">Share</button></li>
+				<li><button type="button" id="about">About</button></li>
+			</ul>
+		</nav>
+	</header>
+
+	<div class="editor">
+		<div class="code">
+			<textarea id="code">! version = 2.0
+
++ hello bot
+- Hello, human.</textarea>
+		</div>
+		<div class="result">
+			<div id="dialogue">
+				<div class="history-pane">
+					<ul id="history">
+					</ul>
+				</div>
+			</div>
+			<div class="controls">
+				<input type="text" size="40" id="message" placeholder="Send a message to the bot" disabled="disabled" autocomplete="off">
+				<button type="submit">Send</button>
+			</div>
+			<div id="debug-pane">
+				<ul id="debug">
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<footer>
+		<div class="pull-right">
+			RiveScript.js v<span id="rs-version">?.?.?</span> &mdash;
+			Copyright &copy; 2016 <a href="https://www.rivescript.com/">RiveScript.com</a>
+		</div>
+
+		<strong>Options:</strong>
+		<label>
+			<input type="checkbox" id="opt-debug" value="true"> Debug Mode
+		</label>
+		<label>
+			<input type="checkbox" id="opt-utf8" value="true"> UTF-8 Mode
+		</label>
+		<label>
+			<input type="checkbox" id="opt-async" value="true"> Async Replies (<a href="/about#async-replies" target="_blank">?</a>)
+		</label>
+	</footer>
+
+</div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"
+	integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
+	crossorigin="anonymous"></script>
+<script src="https://npmcdn.com/rivescript@1.14.0/dist/rivescript.min.js"></script>
+<script type="text/javascript" src="https://npmcdn.com/rivescript-contrib-coffeescript@latest/dist/rivescript-contrib-coffeescript.min.js"></script>
+<script src="{{ url_for('static', filename='js/playground.js') }}"></script>
+{% endblock %}

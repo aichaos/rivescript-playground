@@ -1,0 +1,239 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	font-family: Ubuntu,"Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-size: medium;
+	color: #000000;
+	background-color: #FFFFFF;
+}
+
+a:link, a:visited {
+	color: #006699;
+	text-decoration: underline;
+}
+
+a:hover, a:active {
+	color: #FF9900;
+}
+
+form {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+
+button {
+	font-size: medium;
+	color: #FFFFFF;
+	background-color: #006699;
+	border: 1px solid #006699;
+	border-radius: 4px;
+	padding: 4px;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+
+button:hover {
+	background-color: #0099FF;
+}
+
+input[type="text"], textarea {
+	border: 1px solid #006699;
+	border-radius: 4px;
+	padding: 8px;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+
+input[type="text"]:focus, textarea:focus {
+	border: 1px solid #0099FF;
+	box-shadow: 0px 0px 2px #0099FF;
+}
+
+input:disabled, textarea:disabled {
+	cursor: not-allowed;
+}
+
+pre, code {
+	font-family: "Ubuntu Mono","DejaVu Sans Mono","Lucida Console","Monospace","Courier New",Courier,monospace;
+}
+
+pre {
+	border: 1px dashed #009900;
+	padding: 6px;
+}
+
+.pull-right {
+	float: right;
+}
+
+/* For normal pages */
+.page {
+	display: inline-block;
+	margin: 0 20px;
+	width: 850px;
+}
+
+/* The container holds the header and the editor screen */
+#container {
+	min-height: 100%;
+	height: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+/*** Header and Navigation Buttons ***/
+
+header {
+	padding: 12px;
+	font-size: large;
+	font-weight: bold;
+	background-color: #CACACA;
+	height: 30px;
+
+	/* Fixed flexbox size */
+	flex: 0 0 auto;
+}
+
+header span {
+	float: left;
+	margin-right: 12px;
+	line-height: 30px;
+}
+
+header ul {
+	display: inline;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+header ul li {
+	display: inline;
+	padding: 0 4px;
+}
+
+footer {
+	flex: 0 0 auto;
+	background-color: #CACACA;
+	padding: 8px;
+}
+
+/*** Code Editor Layout ***/
+
+/* The editor screen holds the two halves of the editor */
+div.editor {
+	/* Stretchy flexbox size */
+	flex: 1 1 auto;
+	display: flex;
+}
+
+/* The code half is a flexbox with one child (textarea) taking the full space */
+div.code {
+	display: flex;
+	flex: 1 1 50%;
+	flex-direction: column;
+}
+
+	div.code textarea {
+		flex: 1 1 auto;
+		font-family: "Ubuntu Mono","DejaVu Sans Mono","Lucida Console","Monospace","Courier New",Courier,monospace;
+		font-size: medium;
+		margin: 4px;
+		resize: none;
+	}
+
+/* The result half has many sub-elements and is its own flexbox container */
+div.result {
+	flex: 1 1 50%;
+	display: flex;
+	flex-direction: column;
+}
+
+	div.result div#dialogue {
+		flex: 1 1 auto;
+		overflow: auto;
+		height: 0;
+	}
+
+		div.result div.history-pane {
+			position: relative;
+			margin: 8px;
+		}
+
+		div.history-pane ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		div.history-pane ul li {
+			background-color: #00CCFF;
+			display: block;
+			padding: 8px;
+			margin: 8px 0;
+			border-radius: 8px;
+		}
+
+		div.history-pane ul li.bot {
+			background-color: #00DEFF;
+		}
+
+		div.history-pane ul li.bot::before {
+			content: "RiveScript says: ";
+			font-weight: bold;
+			color: #0000FF;
+		}
+
+		div.history-pane ul li.user {
+			background-color: #FFDE00;
+		}
+
+		div.history-pane ul li.user::before {
+			content: "User says: ";
+			font-weight: bold;
+			color: #FF4400;
+		}
+
+	div.result div.controls {
+		flex: 0 1 auto;
+		display: flex;
+	}
+
+		div.result div.controls input {
+			flex: 1 1 auto;
+			margin: 4px 0;
+		}
+
+		div.result div.controls button {
+			margin: 0 8px;
+		}
+
+	div.result div#debug-pane {
+		font-family: "Ubuntu Mono","DejaVu Sans Mono","Lucida Console","Monospace","Courier New",Courier,monospace;
+		position: relative;
+		flex: 0 1 auto;
+		height: 250px;
+		margin: 8px;
+		overflow: auto;
+		display: none; /* Hide by default */
+	}
+
+	div.result div#debug-pane:before {
+		content: "Debug Panel";
+		display: block;
+		font-weight: bold;
+		text-align: center;
+		color: #FF0000;
+		border-bottom: 1px solid #FF0000;
+	}
+
+	ul#debug {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}

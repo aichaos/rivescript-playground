@@ -1,0 +1,234 @@
+{% extends "layout.html" %}
+{% block title %}About the RiveScript Playground{% endblock %}
+{% block content %}
+
+<header>
+	<span>The RiveScript Playground</span>
+
+	<nav>
+		<ul>
+			<li><button type="button" onClick="window.location='/'">Home</button></li>
+		</ul>
+	</nav>
+</header>
+
+<div class="page">
+	<h1>About the RiveScript Playground</h1>
+
+	The RiveScript Playground is a web service designed for developing, testing,
+	and sharing RiveScript code snippets that run in the web browser.
+	Unlike the <a href="https://www.rivescript.com/try" target="_blank">RiveScript.com "Try Online"</a>
+	page, which was designed for absolute beginners to see how RiveScript works,
+	the RiveScript Playground is designed for bot developers to tinker and share
+	their RiveScript snippets.<p>
+
+	<h2>Table of Contents</h2>
+
+	<ul>
+		<li><a href="#howto">How to use the RiveScript Playground</a></li>
+		<li><a href="#how-it-works">How It Works</a></li>
+		<li><a href="#options">About the Options (Debug, UTF-8, Async Replies)</a></li>
+		<li><a href="#sharing">How to Share Code</a></li>
+		<li><a href="#source">Open Source</a></li>
+		<li><a href="#credits">Credits</a></li>
+	</ul>
+
+	<hr>
+
+	<h1 id="howto">How to use the RiveScript Playground</h1>
+
+	The RiveScript Playground takes some design hints from Google's
+	"Go Playground" and JS Fiddle.<p>
+
+	To begin with, you should write or copy RiveScript code into the large text
+	area on the left side of the page. When you're happy with the code, click
+	on the "Run" button to test the code in your browser.<p>
+
+	When the "Run" button is clicked, the code editor and certain options
+	become disabled and the "send message" box in the lower right of the page
+	is focused. You can then type a message to send to the bot and click the
+	"Send" button, or hit Return on your keyboard, to see the bot's response.<p>
+
+	To stop testing the bot and continue editing the code, click on the
+	"Stop running" button at the top of the page. This switches the playground
+	back into edit mode, allowing you to change the RiveScript source.
+	In edit mode, you can not send a message to the bot again; you must click
+	the "Run" button to test your new code.
+
+	<hr>
+
+	<h1 id="how-it-works">How It Works</h1>
+
+	The RiveScript Playground utilizies the JavaScript version of RiveScript
+	and does all of the processing on your local web browser. It's very similar
+	to the <a href="https://www.rivescript.com/try" target="_blank">RiveScript.com "Try Online"</a>
+	page in this regard.<p>
+
+	You can write and test object macros written in either JavaScript or
+	CoffeeScript.<p>
+
+	When you click on the "Share" button, a copy of your RiveScript code is
+	stored on the web server and is made available at a unique URL that you can
+	then share with others.
+
+	<hr>
+
+	<h1 id="options">About the Options (Debug, UTF-8, Async Replies)</h1>
+
+	The footer of the web page has checkboxes for various options you can
+	enable. The meaning of the options are as follows:
+
+	<h2 id="debug-mode">Debug mode</h2>
+
+	This enables verbose debug logging from the bot. When this box is checked,
+	a debug panel will open on the right side of the page below the Send
+	Message text box, and any debugging output from the bot will be written
+	into this panel (automatically scrolling down as more debug logs are added).<p>
+
+	<ul>
+		<li>If you enable Debug Mode <strong>before clicking "Run"</strong>,
+			the debug panel will capture all of the "parse time" debug logs;
+			it will show each line of the RiveScript source code that the bot
+			is processing and what it's doing with it. This can be very noisy
+			if you're testing a large RiveScript source file, so you might want
+			to wait until after clicking "Run" to turn on debugging.</li>
+		<li>If you enable Debug Mode <strong>while the bot is running</strong>,
+			it will allow you to debug <em>replies</em> from your bot when you
+			next send it a message. This will show what triggers the bot is
+			testing your message against, which one matched your message, and
+			what the bot is doing next.<p>
+
+			This level of debugging is useful if you have a problem with your
+			triggers and want to peek under the hood to find out exactly what
+			the bot is doing with them.</li>
+	</ul>
+
+	<h2 id="utf8-mode">UTF-8 Mode</h2>
+
+	Unicode support in RiveScript is considered an experimental feature: it
+	wasn't designed with Unicode in mind originally and it hasn't been
+	extensively tested with Unicode.<p>
+
+	By default UTF-8 mode is not enabled. The following restrictions are in
+	place within RiveScript in its default configuration:
+
+	<ul>
+		<li>The user's input message is stripped of all non-alphanumeric
+			characters (after substitutions have been run). For example if
+			a user types an e-mail address in their message, the "@" and "."
+			symbols would be removed from their message prior to the bot
+			looking for a reply.</li>
+		<li>In the RiveScript source code, triggers (lines beginning with "+")
+			are not allowed to contain any foreign characters, for example
+			letters with accents. These are considered to be a syntax error
+			and will raise an error message immediately upon testing the bot.</li>
+	</ul>
+
+	<strong>When you enable UTF-8 mode</strong>, these restrictions are loosened:
+
+	<ul>
+		<li>Most symbols are kept preserved in the user's message, except for
+			the backslash "\", HTML angled brackets "&lt;" and "&gt;", and
+			common punctuation symbols (<code>! ? ; : . ,</code>). So the
+			user can use accented letters or other symbols in their message
+			and these will be preserved all the way through the reply fetching
+			process (for example, the user could tell the bot their name using
+			foreign characters).</li>
+		<li>Triggers in the RiveScript source code are allowed to contain
+			foreign symbols. Note, however, that they <strong>should not</strong>
+			contain any punctuation symbols, including question marks.</li>
+	</ul>
+
+	<h2 id="async-replies">Async Replies</h2>
+
+	Enabling this option makes the RiveScript bot get replies for the user's
+	message using the <code>replyAsync()</code> method instead of <code>reply()</code>.<p>
+
+	What this means to you is that you can now write a JavaScript object macro
+	that returns a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Promise</a>
+	to send its reply asynchronously "at some point in the future".<p>
+
+	This is an example to demonstrate when you should use Async Replies:<p>
+
+	<pre>&gt; object async-test javascript
+	return new rs.Promise(function(resolve, reject) {
+		// This example just waits one second before responding,
+		// but it could be doing anything asynchronously that
+		// takes time to complete.
+		setTimeout(function() {
+			resolve("Here's the reply, finally!");
+		}, 1000);
+	});
+&lt; object
+
++ test async replies
+- Here you go: &lt;call&gt;async-test&lt;/call&gt;</pre>
+
+	If you were to run that example and say "Test async replies", the bot by
+	default would say "Here you go: [ERR: Using async routine with reply: use replyAsync instead]";
+	but if you enable the Async Replies option, the history screen will show
+	your message first, and then a second later, the bot will say
+	"Here you go: Here's the reply, finally!"<p>
+
+	<strong>If you aren't testing a JavaScript object macro that returns a Promise,
+	you do not need to worry about this option.</strong> But it doesn't hurt anything
+	to enable it.
+
+	<hr>
+
+	<h1 id="sharing">How to Share Code</h1>
+
+	One of the best features of the RiveScript Playground is the ability to
+	share your code with others.<p>
+
+	To share your code, your code must "compile" first (a RiveScript bot must
+	be able to load your code without giving any error messages). If you are
+	able to test your code by clicking the "Run" button, then it should be
+	ready to share!<p>
+
+	Simply click on the "Share" button at the top of the page. Your web browser
+	will redirect to a unique URL that you can then copy and paste to share your
+	code snippet with others.<p>
+
+	The following reasonable restrictions are in place when sharing code:
+
+	<ol>
+		<li>The overall size of your RiveScript source must not exceed
+			64 KB (that's 64,000 characters!)</li>
+		<li>Shared code <strong>can not be deleted.</strong> Be careful about
+			including sensitive information in your RiveScript snippets if you
+			intend to share them. If you need a link to be taken down, contact
+			the owner of the RiveScript Playground web service (if you're
+			reading this on <code>play.rivescript.com</code>, then visit
+			the <a href="https://www.rivescript.com/contact/">RiveScript.com contact page</a>
+			to send your request). This web app is <a href="#source">open source</a>,
+			so if you're using somebody else's instance of this app you need
+			to get in touch with them instead.</li>
+	</ol>
+
+	<hr>
+
+	<h1 id="source">Open Source</h1>
+
+	The RiveScript Playground is an open source web app released under the GNU
+	General Public License, version 2.<p>
+
+	You can view the source code at
+	<a href="https://github.com/aichaos/rivescript-playground" target="_blank">https://github.com/aichaos/rivescript-playground</a>
+
+	<hr>
+
+	<h1 id="credits">Credits</h1>
+
+	This app was created by Noah Petherbridge, &copy; 2016 &mdash; All rights reserved.<p>
+
+	See also:
+
+	<ul>
+		<li><a href="https://www.rivescript.com/" target="_blank">RiveScript.com</a></li>
+		<li><a href="https://github.com/aichaos" target="_blank">AiChaos on GitHub</a></li>
+	</ul>
+
+</div>
+
+{% endblock %}

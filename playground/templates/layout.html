@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}Untitled{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/playground.css') }}">
+</head>
+<body>
+
+{% block content %}{% endblock %}
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
