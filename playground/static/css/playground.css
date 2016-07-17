@@ -47,6 +47,8 @@ input[type="text"], textarea {
 	padding: 8px;
 	-webkit-transition-duration: 0.4s;
 	transition-duration: 0.4s;
+	color: #000000;
+	background-color: #FFFFDD;
 }
 
 input[type="text"]:focus, textarea:focus {
@@ -56,6 +58,8 @@ input[type="text"]:focus, textarea:focus {
 
 input:disabled, textarea:disabled {
 	cursor: not-allowed;
+	background-color: #DDDDDD;
+	color: #666666;
 }
 
 pre, code {
@@ -76,6 +80,12 @@ pre {
 	display: inline-block;
 	margin: 0 20px;
 	width: 850px;
+}
+
+/* The share label, only immediately after sharing */
+#sharing {
+	font-weight: normal;
+	display: none;
 }
 
 /* The container holds the header and the editor screen */

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Error!{% endblock %}
+{% block content %}
+
+<header>
+	<span>The RiveScript Playground</span>
+
+	<nav>
+		<ul>
+			<li><button type="button" onClick="window.location='/'">Home</button></li>
+		</ul>
+	</nav>
+</header>
+
+<div class="page">
+	<h1>An error has occurred</h1>
+
+	{{ error }}<p>
+
+	<a href="/">Return to the RiveScript Playground</a>
+</div>
+
+{% endblock %}

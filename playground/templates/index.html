@@ -13,16 +13,20 @@
 				<li><button type="button" id="run">Run</button></li>
 				<li><button type="button" id="share">Share</button></li>
 				<li><button type="button" id="about">About</button></li>
+				<li id="sharing">
+					Your share link has been created:
+					<input type="text" size="40" id="share-url" value="{{ url }}" readonly>
+				</li>
 			</ul>
 		</nav>
 	</header>
 
 	<div class="editor">
 		<div class="code">
-			<textarea id="code">! version = 2.0
+			<textarea id="code">{% if source %}{{ source }}{% else %}! version = 2.0
 
 + hello bot
-- Hello, human.</textarea>
+- Hello, human.{% endif %}</textarea>
 		</div>
 		<div class="result">
 			<div id="dialogue">
@@ -72,4 +76,13 @@
 <script src="https://npmcdn.com/rivescript@1.14.0/dist/rivescript.min.js"></script>
 <script type="text/javascript" src="https://npmcdn.com/rivescript-contrib-coffeescript@latest/dist/rivescript-contrib-coffeescript.min.js"></script>
 <script src="{{ url_for('static', filename='js/playground.js') }}"></script>
+
+{% if sharing %}
+<script>
+	$(document).ready(function() {
+		$("#sharing").css("display", "inline");
+	});
+</script>
+{% endif %}
+
 {% endblock %}
