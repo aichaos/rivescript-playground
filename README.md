@@ -8,6 +8,8 @@ RiveScript, so the bot runs on the user's own web browser, and provides a way
 to share code snippets with others (for example, to demonstrate how to do
 something or reproduce a bug).
 
+You can use the live RiveScript Playground site at <https://play.rivescript.com/>
+
 This is a simple Python Flask web app that requires no database or
 configuration at all: not even session secret keys need to be set up.
 
