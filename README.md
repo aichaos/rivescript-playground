@@ -27,6 +27,13 @@ There is an example `app.wsgi` and `wsgi_gunicorn.py` for running the app in
 production using mod_wsgi or gunicorn, respectively. Refer to the Flask
 documentation for deployment options.
 
+## Configuration
+
+If you're serving this behind a proxy (so that the "remote address" isn't the
+visitor's real IP address), run the app with the environment variable
+`USE_X_FORWARDED_FOR` set to a truthy value. Don't do this if you're not running
+the app from behind a proxy, though, or users can spoof their own IP addresses!
+
 # Shared Snippets
 
 This app requires no configuration, but the "Share" feature of the app needs to

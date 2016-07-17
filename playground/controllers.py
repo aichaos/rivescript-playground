@@ -49,11 +49,16 @@ def share():
             return jsonify(error="Couldn't allocate a unique ID for you. Try your request again."), 500
         uuid = make_unique_id(UUID_LENGTH)
 
+    # User's IP address, is it behind X-Forwarded-For?
+    ip = request.remote_addr
+    if os.environ.get("USE_X_FORWARDED_FOR"):
+        ip = request.access_route[0]
+
     # Payload to save to disk.
     payload = {
         "source": source,
         "timeCreated": datetime.datetime.utcnow().isoformat(),
-        "ip": request.remote_addr,
+        "ip": ip,
     }
 
     # Save their code snippet.
