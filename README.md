@@ -27,6 +27,26 @@ There is an example `app.wsgi` and `wsgi_gunicorn.py` for running the app in
 production using mod_wsgi or gunicorn, respectively. Refer to the Flask
 documentation for deployment options.
 
+# Shared Snippets
+
+This app requires no configuration, but the "Share" feature of the app needs to
+write JSON files to the hard disk. It writes them into a folder named "share"
+relative to the app's current working directory. It will need permission to
+create this folder when it doesn't exist and to read and write files in it.
+
+Here is an example Supervisor configuration for running this app:
+
+```ini
+[program:rivescript_playground]
+command = /home/www/.pyvenv/playground/bin/gunicorn -b 127.0.0.1:9004 -u www -g www wsgi_gunicorn:app
+directory = /home/www/git/rivescript-playground
+user = www
+```
+
+In that configuration it runs as an unprivileged user, `www` and its working
+directory is set to the git clone where it has permissions to create and
+manage its `share` folder.
+
 # Copyright
 
 ```
