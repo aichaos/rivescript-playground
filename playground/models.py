@@ -50,5 +50,5 @@ class Snippet(Base):
     @classmethod
     def make_checksum(cls, source):
         s = hashlib.sha1()
-        s.update(source)
+        s.update(source.encode())
         return s.hexdigest()
