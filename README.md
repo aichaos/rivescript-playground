@@ -39,9 +39,9 @@ the app from behind a proxy, though, or users can spoof their own IP addresses!
 # Shared Snippets
 
 This app requires no configuration, but the "Share" feature of the app needs to
-write JSON files to the hard disk. It writes them into a folder named "share"
-relative to the app's current working directory. It will need permission to
-create this folder when it doesn't exist and to read and write files in it.
+write a SQLite database file named `database.sqlite` to the hard disk in its
+current working directory. It will need permission to create this file when it
+doesn't exist, update it and read from it.
 
 Here is an example Supervisor configuration for running this app:
 

@@ -4,25 +4,19 @@
 # See the LICENSE file for more information.
 
 from flask import Blueprint, request, session, jsonify, render_template
-import codecs
-import datetime
-import json
 import os
 import random
 import re
 import string
 
 from .default import DEFAULT_SOURCE
+from .models import UUID_LENGTH, db_session, Snippet
 
 controllers = Blueprint('controllers', __name__, url_prefix='/')
 
 # 64 KB max source size sounds quite generous, but this might be useful to
 # make it a configurable option in the future.
 MAX_SOURCE_SIZE = 64000
-
-# Length of unique IDs. This should definitely probably be made configurable
-# at some point.
-UUID_LENGTH = 10
 
 @controllers.route("")
 def index():
@@ -40,30 +34,36 @@ def share():
     if len(source) > MAX_SOURCE_SIZE:
         return jsonify(error="Your source file is too large."), 400
 
+    # Has somebody already shared this exact code before?
+    exist = db_session.query(Snippet).filter(Snippet.sha1sum == Snippet.make_checksum(source)).first()
+    if exist is not None:
+        session["sharing"] = True
+        return jsonify(uuid=exist.id)
+
     # Generate a unique ID.
     uuid  = make_unique_id(UUID_LENGTH)
     retry = 0
-    while os.path.isfile("./share/{}.json".format(uuid)):
+    exist = db_session.query(Snippet).get(uuid)
+    while exist is not None:
         retry += 1
         if retry > 20:
             return jsonify(error="Couldn't allocate a unique ID for you. Try your request again."), 500
         uuid = make_unique_id(UUID_LENGTH)
+        exist = Snippet.get(uuid)
 
     # User's IP address, is it behind X-Forwarded-For?
     ip = request.remote_addr
     if os.environ.get("USE_X_FORWARDED_FOR"):
         ip = request.access_route[0]
 
-    # Payload to save to disk.
-    payload = {
-        "source": source,
-        "timeCreated": datetime.datetime.utcnow().isoformat(),
-        "ip": ip,
-    }
-
-    # Save their code snippet.
-    with codecs.open("./share/{}.json".format(uuid), "w", "utf-8") as fh:
-        fh.write(json.dumps(payload, sort_keys=True, indent=4))
+    # Save their snippet.
+    snippet = Snippet(
+        id=uuid,
+        source=source,
+        ip=ip,
+    )
+    db_session.add(snippet)
+    db_session.commit()
 
     session["sharing"] = True
     return jsonify(uuid=uuid)
@@ -76,22 +76,14 @@ def saved_code(uuid):
     if re.match(r'[^A-Za-z0-9]+$', uuid):
         return error("Improperly formatted UUID.")
 
-    # Exists?
-    db = "./share/{}.json".format(uuid)
-    if not os.path.isfile(db):
+    # Look up the snippet.
+    snippet = db_session.query(Snippet).get(uuid)
+    if snippet is None:
         return error("The RiveScript snippet you're looking for was not found. "
             "It may have been deleted; otherwise double check the URL.")
 
-    # Read it!
-    data = dict()
-    with codecs.open(db, "r", "utf-8") as fh:
-        try:
-            data = json.loads(fh.read())
-        except Exception as e:
-            return error("Failed to parse JSON from stored file: {}".format(e))
-
     return render_template("index.html",
-        source=data["source"],
+        source=snippet.source,
         sharing=session.pop("sharing", False),
         url=request.url,
     )
