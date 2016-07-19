@@ -3,7 +3,10 @@
 # This code is released under the GNU General Public License, version 2.
 # See the LICENSE file for more information.
 
-from flask import Blueprint, request, session, jsonify, render_template
+from flask import (
+    Blueprint, request, jsonify, render_template, make_response
+)
+import datetime
 import os
 import random
 import re
@@ -35,38 +38,39 @@ def share():
         return jsonify(error="Your source file is too large."), 400
 
     # Has somebody already shared this exact code before?
+    uuid  = None
     exist = db_session.query(Snippet).filter(Snippet.sha1sum == Snippet.make_checksum(source)).first()
     if exist is not None:
-        session["sharing"] = True
-        return jsonify(uuid=exist.id)
+        uuid = exist.id
+    else:
+        # Generate a unique ID.
+        uuid  = make_unique_id(UUID_LENGTH)
+        retry = 0
+        exist = db_session.query(Snippet).get(uuid)
+        while exist is not None:
+            retry += 1
+            if retry > 20:
+                return jsonify(error="Couldn't allocate a unique ID for you. Try your request again."), 500
+            uuid = make_unique_id(UUID_LENGTH)
+            exist = Snippet.get(uuid)
 
-    # Generate a unique ID.
-    uuid  = make_unique_id(UUID_LENGTH)
-    retry = 0
-    exist = db_session.query(Snippet).get(uuid)
-    while exist is not None:
-        retry += 1
-        if retry > 20:
-            return jsonify(error="Couldn't allocate a unique ID for you. Try your request again."), 500
-        uuid = make_unique_id(UUID_LENGTH)
-        exist = Snippet.get(uuid)
+        # User's IP address, is it behind X-Forwarded-For?
+        ip = request.remote_addr
+        if os.environ.get("USE_X_FORWARDED_FOR"):
+            ip = request.access_route[0]
 
-    # User's IP address, is it behind X-Forwarded-For?
-    ip = request.remote_addr
-    if os.environ.get("USE_X_FORWARDED_FOR"):
-        ip = request.access_route[0]
+        # Save their snippet.
+        snippet = Snippet(
+            id=uuid,
+            source=source,
+            ip=ip,
+        )
+        db_session.add(snippet)
+        db_session.commit()
 
-    # Save their snippet.
-    snippet = Snippet(
-        id=uuid,
-        source=source,
-        ip=ip,
-    )
-    db_session.add(snippet)
-    db_session.commit()
-
-    session["sharing"] = True
-    return jsonify(uuid=uuid)
+    resp = make_response(jsonify(uuid=uuid))
+    resp.set_cookie("sharing", "true")
+    return resp
 
 @controllers.route("s/<uuid>")
 def saved_code(uuid):
@@ -82,11 +86,21 @@ def saved_code(uuid):
         return error("The RiveScript snippet you're looking for was not found. "
             "It may have been deleted; otherwise double check the URL.")
 
-    return render_template("index.html",
+    # Refresh the last-accessed time.
+    snippet.accessed = datetime.datetime.utcnow()
+    db_session.add(snippet)
+    db_session.commit()
+
+    # Were they immediately sharing this?
+    sharing = request.cookies.get("sharing", "false") == "true"
+
+    resp = make_response(render_template("index.html",
         source=snippet.source,
-        sharing=session.pop("sharing", False),
+        sharing=sharing,
         url=request.url,
-    )
+    ))
+    resp.set_cookie("sharing", "", expires=0)
+    return resp
 
 @controllers.route("about")
 def about():

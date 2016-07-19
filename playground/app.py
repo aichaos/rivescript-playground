@@ -12,11 +12,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite'
     init_db()
 
-    # Make a random secret key every time. We don't keep any long term sessions,
-    # just when we want to pop up a confirmation after the user was redirected
-    # post-share.
-    app.secret_key = os.urandom(24)
-
     # Make the storage directory.
     if not os.path.isdir("./share"):
         os.mkdir("./share")
