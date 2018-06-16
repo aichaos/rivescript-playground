@@ -27,7 +27,7 @@
 	<ul>
 		<li><a href="#howto">How to use the RiveScript Playground</a></li>
 		<li><a href="#how-it-works">How It Works</a></li>
-		<li><a href="#options">About the Options (Debug, UTF-8, Async Replies)</a></li>
+		<li><a href="#options">About the Options (Debug, UTF-8 Mode)</a></li>
 		<li><a href="#how-to-share">How to Share Code</a></li>
 		<li><a href="#source">Open Source</a></li>
 		<li><a href="#credits">Credits</a></li>
@@ -73,7 +73,7 @@
 
 	<hr>
 
-	<h1 id="options">About the Options (Debug, UTF-8, Async Replies)</h1>
+	<h1 id="options">About the Options (Debug, UTF-8 Mode)</h1>
 
 	The footer of the web page has checkboxes for various options you can
 	enable. The meaning of the options are as follows:
@@ -138,41 +138,6 @@
 			foreign symbols. Note, however, that they <strong>should not</strong>
 			contain any punctuation symbols, including question marks.</li>
 	</ul>
-
-	<h2 id="async-replies">Async Replies</h2>
-
-	Enabling this option makes the RiveScript bot get replies for the user's
-	message using the <code>replyAsync()</code> method instead of <code>reply()</code>.<p>
-
-	What this means to you is that you can now write a JavaScript object macro
-	that returns a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank">Promise</a>
-	to send its reply asynchronously "at some point in the future".<p>
-
-	This is an example to demonstrate when you should use Async Replies:<p>
-
-	<pre>&gt; object async-test javascript
-	return new rs.Promise(function(resolve, reject) {
-		// This example just waits one second before responding,
-		// but it could be doing anything asynchronously that
-		// takes time to complete.
-		setTimeout(function() {
-			resolve("Here's the reply, finally!");
-		}, 1000);
-	});
-&lt; object
-
-+ test async replies
-- Here you go: &lt;call&gt;async-test&lt;/call&gt;</pre>
-
-	If you were to run that example and say "Test async replies", the bot by
-	default would say "Here you go: [ERR: Using async routine with reply: use replyAsync instead]";
-	but if you enable the Async Replies option, the history screen will show
-	your message first, and then a second later, the bot will say
-	"Here you go: Here's the reply, finally!"<p>
-
-	<strong>If you aren't testing a JavaScript object macro that returns a Promise,
-	you do not need to worry about this option.</strong> But it doesn't hurt anything
-	to enable it.
 
 	<hr>
 

@@ -18,7 +18,6 @@ $(document).ready(function() {
 	var $message      = $("#message");
 	var $optDebug     = $("#opt-debug");
 	var $optUTF8      = $("#opt-utf8");
-	var $optAsync     = $("#opt-async");
 	var $debugPanel   = $("#debug-pane");
 	var $debugOut     = $("#debug");
 	var $rsVersion    = $("#rs-version");
@@ -28,7 +27,6 @@ $(document).ready(function() {
 	$codeEditor.prop("disabled", false);
 	$message.prop("disabled", true);
 	$optUTF8.prop("disabled", false);
-	$optAsync.prop("disabled", false);
 
 	// The share URL selects itself on click.
 	$shareURL.focus(function() {
@@ -144,7 +142,6 @@ $(document).ready(function() {
 		$btnRun.text("Stop running");
 		$codeEditor.prop("disabled", true);
 		$optUTF8.prop("disabled", true);
-		$optAsync.prop("disabled", true);
 		$message.prop("disabled", false);
 		$message.focus();
 
@@ -196,13 +193,7 @@ $(document).ready(function() {
 		appendHistory("user", text);
 
 		// Get the reply.
-		if ($optAsync.prop("checked")) {
-			window.rs.replyAsync("web-user", text).then(onReply);
-		}
-		else {
-			var reply = window.rs.reply("web-user", text);
-			onReply(reply);
-		}
+		window.rs.reply("web-user", text).then(onReply);
 	};
 
 	// Handle a reply being returned by the bot.
@@ -216,7 +207,6 @@ $(document).ready(function() {
 		$codeEditor.prop("disabled", false);
 		$message.prop("disabled", true);
 		$optUTF8.prop("disabled", false);
-		$optAsync.prop("disabled", false);
 		$codeEditor.focus();
 
 		window.rs = null;
