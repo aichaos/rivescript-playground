@@ -189,11 +189,16 @@ $(document).ready(function() {
 			return;
 		}
 
+
 		// Add the user's message to the history.
 		appendHistory("user", text);
 
 		// Get the reply.
-		window.rs.reply("web-user", text).then(onReply);
+		// Save their original message as the uservar origMessage for
+		// object macros to have access to.
+		window.rs.setUservar("web-user", "origMessage", text).then(function() {
+			return window.rs.reply("web-user", text);
+		}).then(onReply);
 	};
 
 	// Handle a reply being returned by the bot.
