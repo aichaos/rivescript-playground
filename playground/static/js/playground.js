@@ -175,7 +175,7 @@ $(document).ready(function() {
 	};
 
 	// Handle the user sending a message to the running bot.
-	function sendMessage() {
+	async function sendMessage() {
 		// Get their message.
 		var text = $message.val();
 		$message.val("");
@@ -196,9 +196,8 @@ $(document).ready(function() {
 		// Get the reply.
 		// Save their original message as the uservar origMessage for
 		// object macros to have access to.
-		window.rs.setUservar("web-user", "origMessage", text).then(function() {
-			return window.rs.reply("web-user", text);
-		}).then(onReply);
+		await window.rs.setUservar("web-user", "origMessage", text);
+		window.rs.reply("web-user", text).then(onReply);
 	};
 
 	// Handle a reply being returned by the bot.
