@@ -6,22 +6,22 @@
 // The RiveScript bot instance, on the window scope so it can be debugged.
 window.rs = null;
 
-$(document).ready(function() {
+$(document).ready(function () {
 	// Get all the DOM objects.
-	var $form         = $("#playground-form");
-	var $btnRun       = $("#run");
-	var $btnShare     = $("#share");
-	var $btnAbout     = $("#about");
-	var $codeEditor   = $("#code");
+	var $form = $("#playground-form");
+	var $btnRun = $("#run");
+	var $btnShare = $("#share");
+	var $btnAbout = $("#about");
+	var $codeEditor = $("#code");
 	var $historyPanel = $("#dialogue");
-	var $history      = $("#history");
-	var $message      = $("#message");
-	var $optDebug     = $("#opt-debug");
-	var $optUTF8      = $("#opt-utf8");
-	var $debugPanel   = $("#debug-pane");
-	var $debugOut     = $("#debug");
-	var $rsVersion    = $("#rs-version");
-	var $shareURL     = $("#share-url");
+	var $history = $("#history");
+	var $message = $("#message");
+	var $optDebug = $("#opt-debug");
+	var $optUTF8 = $("#opt-utf8");
+	var $debugPanel = $("#debug-pane");
+	var $debugOut = $("#debug");
+	var $rsVersion = $("#rs-version");
+	var $shareURL = $("#share-url");
 
 	// Fix disabled states in case of the user reloading the page.
 	$codeEditor.prop("disabled", false);
@@ -29,7 +29,7 @@ $(document).ready(function() {
 	$optUTF8.prop("disabled", false);
 
 	// The share URL selects itself on click.
-	$shareURL.focus(function() {
+	$shareURL.focus(function () {
 		$shareURL.select();
 	});
 
@@ -40,12 +40,12 @@ $(document).ready(function() {
 	$rsVersion.text(new RiveScript().version());
 
 	// The about button opens the /about page.
-	$btnAbout.on("click", function() {
+	$btnAbout.on("click", function () {
 		window.open("/about");
 	});
 
 	// The run button runs the bot.
-	$btnRun.on("click", function() {
+	$btnRun.on("click", function () {
 		var ok = false;
 		if (isRunning) {
 			ok = teardownBot();
@@ -60,7 +60,7 @@ $(document).ready(function() {
 	});
 
 	// The share button.
-	$btnShare.on("click", function() {
+	$btnShare.on("click", function () {
 		// Get their source code.
 		var code = $codeEditor.val();
 		if (code.length === 0) {
@@ -77,7 +77,7 @@ $(document).ready(function() {
 		var bot = new RiveScript({
 			utf8: $optUTF8.prop("checked")
 		});
-		bot.stream(code, function(error) {
+		bot.stream(code, function (error) {
 			window.alert("Please correct the following error in your RiveScript code:\n\n" + error);
 			hasErrors = true;
 		});
@@ -93,29 +93,29 @@ $(document).ready(function() {
 				"source": code,
 			}),
 			dataType: "json",
-			success: function(data) {
+			success: function (data) {
 				if (data.uuid !== undefined) {
 					window.location = "/s/" + data.uuid;
 				}
 			},
-			error: function(error) {
+			error: function (error) {
 				window.alert(error.responseJSON.error);
 			}
 		});
 	})
 
 	// Form submitting and clicking the Send button.
-	$form.submit(function() {
+	$form.submit(function () {
 		try {
 			sendMessage();
-		} catch(e) {
+		} catch (e) {
 			window.alert(e);
 		}
 		return false;
 	})
 
 	// Toggling debug mode.
-	$optDebug.on("change", function() {
+	$optDebug.on("change", function () {
 		if ($optDebug.prop("checked")) {
 			$debugPanel.show();
 		}
@@ -159,7 +159,7 @@ $(document).ready(function() {
 		window.rs.setHandler("coffee", new RSCoffeeScript(window.rs));
 
 		var hasErrors = false;
-		window.rs.stream(code, function(error) {
+		window.rs.stream(code, function (error) {
 			window.alert("Error in your RiveScript code:\n\n" + error);
 			hasErrors = true;
 		});
@@ -202,6 +202,9 @@ $(document).ready(function() {
 
 	// Handle a reply being returned by the bot.
 	function onReply(reply) {
+		if (reply.indexOf("<noreply>") > -1) {
+			return;
+		}
 		appendHistory("bot", reply);
 	};
 
