@@ -231,7 +231,7 @@ $(document).ready(function () {
 
 	// Add a history item (user or bot message) to the dialogue panel.
 	function appendHistory(className, text) {
-		$history.append('<li class="' + className + '">' + text + '</li>');
+		$history.append('<li class="' + className + '">' + text.replaceAll("\n", "<br>") + '</li>');
 		$historyPanel.animate({ scrollTop: $historyPanel[0].scrollHeight }, 1000);
 	}
 });
